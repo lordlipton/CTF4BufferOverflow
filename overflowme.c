@@ -2,19 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-__attribute__((noreturn)) void win() {
+void win() {
     FILE *f = fopen("flag.txt", "r");
     if (!f) {
         puts("Flag file missing! Contact the challenge admin.");
         exit(1);
     }
+
     char flag[256];
     if (!fgets(flag, sizeof(flag), f)) {
         puts("Could not read flag!");
         fclose(f);
         exit(1);
     }
-    puts(flag);
+
+    puts(flag); 
     fclose(f);
     exit(0);
 }
@@ -22,7 +24,8 @@ __attribute__((noreturn)) void win() {
 void vuln() {
     char buffer[64];
     puts("Welcome to basic bof. Overflow me!");
-    gets(buffer); // INTENTIONALLY VULNERABLE
+    // Read more than the buffer size to allow overflow
+    fgets(buffer, 1024, stdin);
     printf("You said: %s\n", buffer);
 }
 
@@ -32,3 +35,4 @@ int main() {
     puts("Bye!");
     return 0;
 }
+
