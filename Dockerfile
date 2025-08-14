@@ -18,7 +18,7 @@ RUN gcc -fno-stack-protector -z execstack -no-pie -O2 -o overflowme overflowme.c
 FROM debian:stable-slim
 
 RUN apt-get update && \
-    apt-get install -y netcat && \
+    apt-get install -y netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/challenge
@@ -26,8 +26,8 @@ WORKDIR /home/challenge
 # Copy compiled binary from builder stage
 COPY --from=builder /build/overflowme ./overflowme
 
-# Add the flag
-COPY flag.txt ./flag.txt
+# Create the flag file
+RUN echo "TheEasiestOverflow" > flag.txt
 
 # Permissions
 RUN chmod 755 overflowme && \
