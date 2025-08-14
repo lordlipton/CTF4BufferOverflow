@@ -10,7 +10,7 @@ WORKDIR /build
 # Copy vulnerable source
 COPY overflowme.c .
 
-# Compile stripped, vulnerable binary
+# Compile stripped, vulnerable binary with protections disabled
 RUN gcc -fno-stack-protector -z execstack -no-pie -O2 -o overflowme overflowme.c && \
     strip overflowme
 
@@ -23,7 +23,7 @@ RUN apt-get update && \
 
 WORKDIR /home/challenge
 
-# Copy only the compiled binary from builder stage
+# Copy compiled binary from builder stage
 COPY --from=builder /build/overflowme ./overflowme
 
 # Add the flag
@@ -33,6 +33,12 @@ COPY flag.txt ./flag.txt
 RUN chmod 755 overflowme && \
     chmod 400 flag.txt && \
     chown root:root overflowme flag.txt
+
+EXPOSE 4444
+
+# Run the binary in a loop with netcat
+CMD while true; do nc -lvnp 4444 -e ./overflowme; done
+
 
 EXPOSE 4444
 
