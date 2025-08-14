@@ -18,7 +18,7 @@ RUN gcc -fno-stack-protector -z execstack -no-pie -O2 -o overflowme overflowme.c
 FROM debian:stable-slim
 
 RUN apt-get update && \
-    apt-get install -y netcat-openbsd && \
+    apt-get install -y socat && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/challenge
@@ -26,7 +26,6 @@ WORKDIR /home/challenge
 # Copy compiled binary from builder stage
 COPY --from=builder /build/overflowme ./overflowme
 
-# Create the flag file
 RUN echo "TheEasiestOverflow" > flag.txt
 
 # Permissions
@@ -36,15 +35,9 @@ RUN chmod 755 overflowme && \
 
 EXPOSE 4444
 
-# Run the binary in a loop with netcat
-# Run the binary in a loop with a 5-second pause between runs
+# Run the binary in a loop with socat, 5-second delay between runs
 CMD while true; do \
-      nc -lvnp 4444 -e ./overflowme; \
+      socat TCP-LISTEN:4444,reuseaddr,fork EXEC:./overflowme; \
       echo "Restarting in 5 seconds..."; \
       sleep 5; \
     done
-
-EXPOSE 4444
-
-# Run in infinite loop
-CMD while true; do nc -lvnp 4444 -e ./overflowme; done
