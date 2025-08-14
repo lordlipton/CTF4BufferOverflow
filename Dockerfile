@@ -37,8 +37,12 @@ RUN chmod 755 overflowme && \
 EXPOSE 4444
 
 # Run the binary in a loop with netcat
-CMD while true; do nc -lvnp 4444 -e ./overflowme; done
-
+# Run the binary in a loop with a 5-second pause between runs
+CMD while true; do \
+      nc -lvnp 4444 -e ./overflowme; \
+      echo "Restarting in 5 seconds..."; \
+      sleep 5; \
+    done
 
 EXPOSE 4444
 
