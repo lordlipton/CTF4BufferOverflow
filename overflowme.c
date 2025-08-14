@@ -16,7 +16,7 @@ void win() {
         exit(1);
     }
 
-    puts(flag); 
+    puts(flag);  // Prints: TheEasiestOverflow
     fclose(f);
     exit(0);
 }
@@ -24,8 +24,7 @@ void win() {
 void vuln() {
     char buffer[64];
     puts("Welcome to basic bof. Overflow me!");
-    // Read more than the buffer size to allow overflow
-    fgets(buffer, 1024, stdin);
+    gets(buffer); // INTENTIONALLY UNSAFE
     printf("You said: %s\n", buffer);
 }
 
